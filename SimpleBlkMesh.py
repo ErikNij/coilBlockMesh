@@ -85,12 +85,16 @@ arcs = []
 blks = []
 faces = []
 #Creating the central square
-domains.append ([1/(meshOpts['levels'][0] + 1)*twoOntwo*(meshOpts["coilRad"]-meshOpts["wireRad"]),
+if meshOpts['seperate'] == 1:
+     domains.append ([1/(meshOpts['levels'][0] + 1)*twoOntwo*(meshOpts["coilRad"]-meshOpts["wireRad"]),
+			[-meshOpts["workpeiceDH"]/2,meshOpts["workpeiceDH"]/2]])
+if meshOpts['seperate'] == 0:
+     domains.append ([1/(meshOpts['levels'][0] + 1)*twoOntwo*(meshOpts["coilRad"]-meshOpts["wireRad"]),
 			[-meshOpts["extraH"]-meshOpts["deltaH"],meshOpts["deltaH"]*(meshOpts["nTurns"]-1)+meshOpts["extraH"]]])
 
 #Creating the ring(s) between the central square and the coil
 for i in range (meshOpts['levels'][0]):
-     domains.append([domains[0][0]*(i+2),domains[0][1]])
+     domains.append([domains[0][0]*(i+2),[-meshOpts["extraH"]-meshOpts["deltaH"],meshOpts["deltaH"]*(meshOpts["nTurns"]-1)+meshOpts["extraH"]]])
 
 
 
@@ -151,7 +155,7 @@ if meshOpts["orginMethod"] == "old":
      nCells = meshOpts["nCells"].copy()
      nCells[0] = nCells[0] * 1
      nCells[1] = nCells[1] * 1
-     addBlock(entriesMid,blks,nCells)
+     addBlock(entriesMid,blks,meshOpts['WPnCells'].copy())
      #for i in range(4):
           #addArcPt(arcs,arcIndex[i],[arcPoints[0][i],arcPoints[1]],R[0]/(meshOpts['levels'][0]+1))
      faces.append([3,2,1,0])
@@ -212,6 +216,8 @@ validDims = [0,1,0,1]
 for i in range(len(entries)):
      #Looping over the different shells(levels)
      for j in range(len(levels)):
+          #j = len(levels)-1
+          print(j)
           #adjusting the indexs as mentioned, saing in real ent, levels is similar to offSet from the old code 
           realent = np.zeros(8,dtype=int)
           realent[:4] = [e + levels[j] for e in entries[i]]
@@ -220,6 +226,8 @@ for i in range(len(entries)):
                nCells = meshOpts['nCells'].copy()
                #possibly add the refinement. However currently unused
                nCells[validDims[i]] = meshOpts['nCells'][validDims[i]]*meshOpts['refinement']
+               if meshOpts['seperate'] == 1:
+                    addBlock(realent.tolist(),blks,nCells)
           else:
                nCells = meshOpts['nCells'].copy()
                #add the block
@@ -229,8 +237,8 @@ for i in range(len(entries)):
                          realent[k] = orIndex
                     if realent[k] in [4,5,6,7]:
                          realent[k] = orIndex+1
-
-          addBlock(realent.tolist(),blks,nCells)
+          if meshOpts['seperate'] == 0:
+               addBlock(realent.tolist(),blks,nCells)
           addArcPt(arcs, [entries[i][arcIndex[i][0]]+levels[j],entries[i][arcIndex[i][1]]+levels[j]],[arcPoints[0][i],arcPoints[1]],R[j])
      #addArcPt(arcs, arcIndex[i],[arcPoints[0][i],arcPoints[1]],R[j])
 
@@ -292,7 +300,7 @@ for face in faces:
 bContent = []
 for i in range(len(bound)):
     bContent.append(bound[i])
-blockMeshDict.content['boundary'] = bContent
+#blockMeshDict.content['boundary'] = bContent
 
 blockMeshDict.writeFileAs('system/blockMeshDict')
 print("blockMeshDict created successfully.")

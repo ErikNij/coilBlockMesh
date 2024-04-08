@@ -1,4 +1,4 @@
-{"nCells": [25, 25, 150],
+{"nCells": [10, 10, 100],
 "refinement" : 1,
 "nTurns":6,
 "coilRad" : 11,
@@ -10,10 +10,13 @@
 "I" : 380,
 "workpeiceR" : 8,
 "workpeiceDH" : 1,
-"workpeice" : "broken",
-"sigmaWP" :60000000,
+"workpeice" : "square",
+"sigmaWP" :10000000,
 "sigmaFake":60000000,
 "levels": [1,1],
 "method": "normal",
-"orginMethod" : "old"
+"orginMethod" : "old",
+"seperate" : 1,
+"WPnCells" : [10, 10, 10]
+
 }

@@ -139,7 +139,7 @@ if meshOpts['workpeice'] != "none":
         workpeiceH[2] = workpeiceH[1] + (meshOpts['workpeiceDH']*(1e-3))
     for i in range(nBlocksTot):
         if (meshOpts['workpeice'] == 'broken') or (meshOpts['workpeice'] == 'square'):
-            if CellCenterValues[i][2] < workpeiceH[2] and CellCenterValues[i][2] > workpeiceH[0]:
+            if (CellCenterValues[i][2] < workpeiceH[2] and CellCenterValues[i][2] > workpeiceH[0]) or meshOpts['seperate'] == 1:
                 if abs(CellCenterValues[i][0]) < 1/(meshOpts['levels'][0] + 1)*twoOntwo*(meshOpts["coilRad"]-meshOpts["wireRad"])*1e-3:
                     if abs(CellCenterValues[i][1]) < 1/(meshOpts['levels'][0] + 1)*twoOntwo*(meshOpts["coilRad"]-meshOpts["wireRad"])*1e-3:
                         sigmaValues[i] = meshOpts["sigmaWP"]
